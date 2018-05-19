@@ -1,0 +1,9 @@
+[package]
+name = "acestream_player"
+version = "0.1.0"
+authors = ["Fahad Saleh"]
+
+[dependencies]
+rexpect = "0.3"
+ctrlc = { version = "3.0", features = ["termination"] }
+rust-crypto = "^0.2"
