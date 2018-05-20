@@ -1,6 +1,9 @@
 extern crate rexpect;
 extern crate ctrlc;
 extern crate crypto;
+extern crate clap;
+
+use clap::{Arg, App, SubCommand};
 
 use rexpect::spawn;
 use rexpect::errors::*;
@@ -36,10 +39,6 @@ fn run_cmd(cmd: &str, args: Vec<String>) -> std::process::Child {
 
 impl AceStreamEngine {
     fn connect(key: &str, ace_url: &str, player: &str) {
-		println!("Starting acestream: {}", ace_url);
-		println!("Public key: {}", key);
-		println!("Player: {}", player);
-
 		AceStreamEngine::start_acestream_engine();
 
 		// Wait for engine to start up
@@ -101,13 +100,36 @@ fn set_term_handler(running: &Arc<AtomicBool>) {
 }
 
 fn main() {
+    let matches = App::new("Rusty AcePlayer")
+                          .version("1.0")
+                          .author("Fahad Saleh <ecsumed@yahoo.com>")
+                          .about("Plays an acestream on most players.")
+                          .arg(Arg::with_name("player")
+                               .short("p")
+                               .long("player")
+                               .help("Name of the player binary, for example: 'vlc', default 'smplayer'")
+                               .takes_value(true))
+                          .arg(Arg::with_name("stream")
+                               .short("s")
+                               .help("URL of the stream to play")
+                               .required(true))
+                          .arg(Arg::with_name("key")
+                               .help("Optional key to use.")
+                               .required(false))
+                          .get_matches();
+
 	// Start loop and terminated on <Ctrl-C>
     let running = Arc::new(AtomicBool::new(true));
 	set_term_handler(&running);
 
-    let player = "smplayer";
-	let key = "kjYX790gTytRaXV04IvC-xZH3A18sj5b1Tf3I-J5XVS1xsj-j0797KwxxLpBl26HPvWMm";
-	let stream = "acestream://5a337e194e1b81052e084fa67803ba98a9d5560d";
+    let player = matches.value_of("config").unwrap_or("smplayer");
+    println!("Player: {}", player);
+    
+    let stream = matches.value_of("stream").unwrap();
+    println!("Stream: {}", player);
+		
+    let key = matches.value_of("config").unwrap_or("kjYX790gTytRaXV04IvC-xZH3A18sj5b1Tf3I-J5XVS1xsj-j0797KwxxLpBl26HPvWMm");
+    println!("Key: {}", key);
 
 	AceStreamEngine::connect(key, stream, player);
 
