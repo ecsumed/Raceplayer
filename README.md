@@ -4,7 +4,7 @@ http://wiki.acestream.org/wiki/index.php/Product_key
 
 # Usage
 ---
-    $ ./target/release/acestream_player -h
+    $ ./bin/acestream_player -h
     Rusty AcePlayer 1.0
     Fahad Saleh <ecsumed@yahoo.com>
     Plays an acestream on most players.
