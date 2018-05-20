@@ -81,8 +81,10 @@ impl AceStreamEngine {
 		p.send_line("USERDATA [{\"gender\": \"1\"}, {\"age\": \"3\"}]");
             
 		p.send_line(&format!("START PID {} 0", stream_id));
-		let url = String::from(p.exp_regex("http://.*").unwrap().1.split(' ')
-                                            .collect::<Vec<_>>()[0].to_owned());
+		let url = String::from(p.exp_regex("http://.*")
+                                           .unwrap().1.split(' ')
+                                           .collect::<Vec<_>>()[0]
+                                           .to_owned());
 
 		let args = vec![String::from(url)];	
 		let player_process = run_cmd(&format!("{}", player), args).wait()
@@ -112,23 +114,27 @@ fn main() {
                           .arg(Arg::with_name("stream")
                                .short("s")
                                .help("URL of the stream to play")
-                               .required(true))
+                               .required(true)
+                               .takes_value(true))
                           .arg(Arg::with_name("key")
+                               .short("k")
                                .help("Optional key to use.")
-                               .required(false))
+                               .required(false)
+                               .takes_value(true))
                           .get_matches();
 
 	// Start loop and terminated on <Ctrl-C>
     let running = Arc::new(AtomicBool::new(true));
 	set_term_handler(&running);
 
-    let player = matches.value_of("config").unwrap_or("smplayer");
-    println!("Player: {}", player);
+    let player = matches.value_of("player").unwrap_or("smplayer");
     
     let stream = matches.value_of("stream").unwrap();
-    println!("Stream: {}", player);
 		
-    let key = matches.value_of("config").unwrap_or("kjYX790gTytRaXV04IvC-xZH3A18sj5b1Tf3I-J5XVS1xsj-j0797KwxxLpBl26HPvWMm");
+    let key = matches.value_of("key").unwrap_or("kjYX790gTytRaXV04IvC-xZH3A18sj5b1Tf3I-J5XVS1xsj-j0797KwxxLpBl26HPvWMm");
+
+    println!("Player: {}", player);
+    println!("Stream: {}", stream);
     println!("Key: {}", key);
 
 	AceStreamEngine::connect(key, stream, player);
